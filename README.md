@@ -1,0 +1,1 @@
+Code created during [Functional-Programming-Graz](http://www.meetup.com/Functional-Programming-Graz/) meetup dojos, with katas mostly from [FunctionalKatas/Katas](https://github.com/FunctionalKatas/Katas).
