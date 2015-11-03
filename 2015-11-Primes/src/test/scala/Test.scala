@@ -3,9 +3,9 @@ package Dojo
 import org.scalatest._
 import Dojo.Main._
 
-object Test extends FunSuite{
+class PrimeSpec extends FunSpec with Matchers {
 
-  test("test if 2 is prime") {
+  it("test if 2 is prime") {
     assert (isPrime(2))
   }
 
