@@ -2,6 +2,7 @@ package Dojo
 
 object Main {
   val sieve : Stream[Int] = {
+    // Note: filterNot is broken in 2.11.7, see https://issues.scala-lang.org/browse/SI-8627
     2 #:: Stream.from(3, 2).filter { i =>
       !sieve.takeWhile(j => j * j <= i)
             .exists(j => i % j == 0)
