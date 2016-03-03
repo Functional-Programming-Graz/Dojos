@@ -85,4 +85,10 @@ class SimpleListSpec extends FunSpec with DiagrammedAssertions {
   describe("Doubly linked list") {
     it should behave like aSimpleList(() => new DoublyLinkedList)
   }
+
+  describe("Other type of list") {
+    it should behave like aSimpleList(
+      () => new PartialFunctionAndSizeList
+    )
+  }
 }

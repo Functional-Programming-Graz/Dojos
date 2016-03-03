@@ -1,5 +1,7 @@
 package dojo
 
+import scala.annotation.tailrec
+
 trait SimpleList {
   def add(s: String): Unit
   def find(s: String): Option[Node]
@@ -12,7 +14,7 @@ trait Node {
 }
 
 case class SinglyLinkedListNode(value: String) extends Node {
-  def delete(s: SinglyLinkedListNode): Unit = next match {
+  @tailrec final def delete(s: SinglyLinkedListNode): Unit = next match {
     case Some(n) => if (n == s) {
       next = n.next
     } else {
@@ -147,3 +149,44 @@ case class DoublyLinkedListNode(value: String) extends Node {
 
   override def toString = s"Node($value, $next)"
 }
+
+class PartialFunctionAndSizeList extends SimpleList {
+  private var f: PartialFunction[Int, String] = {
+    case i => throw new IndexOutOfBoundsException(s"Out of bounds $i")
+  }
+  private var length = 0
+
+  override def add(s: String): Unit = {
+    f = pf(length, s) orElse f
+    length += 1
+  }
+
+  private def pf(i: Int, s: String): PartialFunction[Int, String] = {
+    case n if i == n => s
+  }
+
+  override def toList: List[String] = {
+    (0 until length).toList.map(f)
+  }
+
+  override def delete(s: Node): Unit = {
+    f = deletePf(s.asInstanceOf[PartialFunctionAndSizeNode].i)(f)
+    length -= 1
+  }
+
+  private def deletePf(i: Int)(prev: PartialFunction[Int, String]): PartialFunction[Int, String] = {
+    case n if n >= i => prev(n + 1)
+    case n => prev(n)
+  }
+
+  override def find(s: String): Option[Node] = {
+    @tailrec def find0(i: Int): Option[Node] = {
+      if (i == length) None
+      else if (f(i) == s) Some(PartialFunctionAndSizeNode(i, s))
+      else find0(i + 1)
+    }
+    find0(0)
+  }
+}
+
+case class PartialFunctionAndSizeNode(i: Int, value: String) extends Node
