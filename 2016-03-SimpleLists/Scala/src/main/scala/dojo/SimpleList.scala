@@ -1,0 +1,4 @@
+package dojo
+
+object SimpleList {
+} 
