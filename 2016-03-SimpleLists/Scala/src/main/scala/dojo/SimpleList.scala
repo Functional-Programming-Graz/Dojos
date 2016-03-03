@@ -73,11 +73,77 @@ class SinglyLinkedList extends SimpleList {
 }
 
 class DoublyLinkedList extends SimpleList {
-  override def add(s: String): Unit = ???
+  var first: Option[DoublyLinkedListNode] = None
+  var last: Option[DoublyLinkedListNode] = None
 
-  override def toList: List[String] = ???
+  override def toString = first.toString
 
-  override def delete(s: Node): Unit = ???
+  override def add(s: String): Unit = first match {
+    case None =>
+      first = Some(DoublyLinkedListNode(s))
+      last = first
+    case Some(head) =>
+      last = Some(head.add(s))
+  }
 
-  override def find(s: String): Option[Node] = ???
+  override def toList: List[String] = first match {
+    case None => List()
+    case Some(head) => head.toList
+  }
+
+  override def delete(s: Node): Unit = first match {
+    case Some(n) if n == s =>
+      first = n.next
+      if (first == None) {
+        last = None
+      }
+      s.asInstanceOf[DoublyLinkedListNode].delete()
+    case Some(n) =>
+      s.asInstanceOf[DoublyLinkedListNode].delete()
+      if (last == Some(n)) {
+        last = n.prev
+      }
+    case None => ()
+  }
+
+  override def find(s: String): Option[DoublyLinkedListNode] = first match {
+    case Some(n)  => n.find(s)
+    case _ => None
+  }
+}
+
+case class DoublyLinkedListNode(value: String) extends Node {
+  def delete(): Unit = {
+    next.foreach(_.prev = prev)
+    prev.foreach(_.next = next)
+  }
+
+  var next: Option[DoublyLinkedListNode] = None
+  var prev: Option[DoublyLinkedListNode] = None
+
+  def toList: List[String] = value :: (next match {
+    case None => Nil
+    case Some(n) => n.toList
+  })
+
+  def add(s: String): DoublyLinkedListNode = next match {
+    case Some(n) => n.add(s)
+    case None =>
+      val newNode = DoublyLinkedListNode(s)
+      newNode.prev = Some(this)
+      next = Some(newNode)
+      newNode
+  }
+
+  def find(s: String): Option[DoublyLinkedListNode] =
+    if (value == s) {
+      Some(this)
+    } else {
+      next match {
+        case Some(n) => n.find(s)
+        case None => None
+      }
+    }
+
+  override def toString = s"Node($value, $next)"
 }
